@@ -31,7 +31,7 @@ class Cli
         unless choices.include?(choice)
             puts "Sorry, I didn't understand that. Let's try again."
             puts "To see your options again enter 'list'"
-            choice = get_choice
+            choice = get_choice(choices)
         end 
         choice 
     end 

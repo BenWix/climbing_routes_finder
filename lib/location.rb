@@ -37,15 +37,13 @@ class Location
         when "name"
             @routes.sort_by!{|o| o.name}
         when "grade"
-            binding.pry
-            #grade_order = [...5.7 5.8 5.9 5.10a 5.10b 5.10c 5.10d 5.11a 5.11b...]
-            @routes.sort_by!{|o| o.grade.split(".")[1]}
+            @routes.sort_by!{|o| [o.grade[/[0-9]+/].to_i, o.grade[/[a-z]/]]}
         when "stars"
             @routes.sort_by!{|o| o.stars}.reverse!
         end 
         puts "\nHere are some routes in #{self.place}!\n"
         @routes.each.with_index(1) do |route, index|
-            puts "#{index}. #{route.name}: grade #{route.grade}, type #{route.type}. stars #{route.stars}"
+            puts "#{index}. #{route.name}: grade 5.#{route.grade}, type #{route.type}. stars #{route.stars}"
         end 
         puts " "
     end 

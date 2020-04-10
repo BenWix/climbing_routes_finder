@@ -4,7 +4,7 @@ class Route
 
     def initialize(name, grade, type, stars, id, location)
         @name = name
-        @grade = grade 
+        @grade = grade.split(".")[1] 
         @type = type 
         @stars = stars
         @id = id

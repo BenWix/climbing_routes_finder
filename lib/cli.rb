@@ -1,51 +1,47 @@
 class Cli
-    CHOICES = %w[1 2 exit]
+    #CHOICES = %w[1 2 exit]
     
     def self.run
-        puts "Welcome to the Climbing Route Finder.\nGive us a location, and we can find a route to fit your needs!!\n"
+        puts "\n\nWelcome to the Climbing Route Finder.\nGive us a location, and we can find a route to fit your needs!!\n"
 
         run_loop
     end 
     
     private 
     
-
-    def self.run_loop
-        
+    def self.run_loop     
         main_list_options
-        choice = get_choice
+        options = %w[1 2 list exit]
+        choice = get_choice(options)
         case choice 
         when "1" 
             get_new_area
             current_area_options
         when "2"
-            Location.list_locations
+            get_old_area
+        when "list"
+            main_list_options
+            choice = get_choice(options)
         end 
         run_loop unless choice == "exit"
     end 
 
-    def self.get_choice 
+    def self.get_choice(choices)
         choice = gets.strip.downcase
-        main_list_options if choice == "list"
-
-        unless CHOICES.include?(choice)
-            if choice == "list"
-                main_list_options
-            else 
-                puts "Sorry, I didn't understand that. Let's try again."
-                puts "To see your options again enter 'list'"
-            end 
+        unless choices.include?(choice)
+            puts "Sorry, I didn't understand that. Let's try again."
+            puts "To see your options again enter 'list'"
             choice = get_choice
         end 
         choice 
     end 
     
     def self.main_list_options
-        puts "Please pick one of the following options to get started"
+        puts "\nPlease pick one of the following options to get started"
         puts "_______________________________________________________"
         puts "1. Discover a new location"
         puts "2. Check out an old location"
-        puts "enter 'exit' to leave application.\n"
+        puts "enter 'exit' to leave application.\n"  
     end 
 
     def self.get_new_area
@@ -53,15 +49,57 @@ class Cli
         location = gets.strip
         puts " "
         @@active_location = Location.create_from_place(location)
-        #routes = Api.new.get_routes(new_location)
-        
-        #Route.new_from_array(routes)
-        #Route.list_routes
-        #binding.pry
     end
 
     def self.current_area_options
         @@active_location.list_routes
-        
+        list_location_options
+        options = %w[1 2 3 4 5 exit list]
+        choice = get_choice(options)
+        case choice 
+        when "1"
+            @@active_location.get_and_add_routes
+        when "2"
+            puts "We need to filter"
+        when "3"
+            @@active_location.choose_sort
+        when "4"
+            get_new_area
+        when "list"
+            list_location_options
+            choice = get_choice(options)
+        end 
+        current_area_options unless choice == "exit"
+    end 
+
+    def self.list_location_options
+        puts "\nPlease pick one of the following options to discover more."
+        puts "_______________________________________________________"
+        puts "1. Get more routes"
+        puts "2. Filter Routes"
+        puts "3. Sort Routes"
+        puts "4. Find a new area"
+        puts "enter 'exit' to return to main menu.\n" 
+    end
+
+    def self.get_old_area
+        Location.list_locations
+        options = ['list', 'exit'] + Array(1..Location.all.length).map{|o| o.to_s}
+        puts "\nPlease pick one of the locations from the above list"
+        choice = get_choice(options)
+        case choice 
+        when 'list' 
+            get_old_area
+        when 'exit'
+
+        else 
+            if options.include?(choice)
+                @@active_location = Location.all[choice.to_i - 1]
+            else 
+                puts "Sorry, I didn't understand that. Please try again"
+                get_old_area
+            end 
+        end 
+        current_area_options
     end 
 end 

@@ -25,18 +25,18 @@ class Route
         @route_ids = all.map{|route| route.id}
     end
     
-    def self.new_from_array(routes, location) 
-        routes.each do |route|
-            name = route["name"] 
-            grade = route["rating"] 
-            type = route["type"] 
-            stars = route["stars"]
-            id = route["id"]
-            unless all_ids.include?(id)
-                Route.new(name, grade, type, stars, id, location)
-            end 
-        end 
-    end 
+    # def self.new_from_array(routes, location) 
+    #     routes.each do |route|
+    #         name = route["name"] 
+    #         grade = route["rating"] 
+    #         type = route["type"] 
+    #         stars = route["stars"]
+    #         id = route["id"]
+    #         unless all_ids.include?(id)
+    #             Route.new(name, grade, type, stars, id, location)
+    #         end 
+    #     end 
+    # end 
 
     def self.new_from_hash(route_hash, location)
         name = route_hash["name"] 

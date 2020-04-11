@@ -3,6 +3,7 @@ class Location
     attr_reader :lat, :lon, :place
     
     @@all = []
+    
 
     require 'pry'
     require 'geocoder'
@@ -73,14 +74,16 @@ class Location
     end 
 
     def sort_routes 
+        grade_order = self.class.make_order
         case @sort
         when "name"
             @filtered_routes.sort_by!{|o| o.name}
         when "grade"
-            @filtered_routes.sort_by!{|o| [o.grade[/[0-9]+/].to_i, o.grade[/[a-z]/]]}
+            @filtered_routes.sort_by!{|o| grade_order.index(o.grade.split.first)}
         when "stars"
             @filtered_routes.sort_by!{|o| o.stars}.reverse!
         end
+        #binding.pry
     end 
 
     def save
@@ -88,6 +91,31 @@ class Location
     end 
 
     ###Class Methods###
+    def self.make_order
+        order_array = []
+        ten_through_fifteen = Array(10..15)
+        one_through_nine = Array(1..9)
+        
+        one_through_nine.each do |num|
+            order_array << "#{num}-"
+            order_array << "#{num}"
+            order_array << "#{num}+"
+        end 
+        
+        ten_through_fifteen.each do |num|
+            order_array << "#{num}a"
+            order_array << "#{num}a/b"
+            order_array << "#{num}-"
+            order_array << "#{num}b"
+            order_array << "#{num}b/c"
+            order_array << "#{num}c"
+            order_array << "#{num}+"
+            order_array << "#{num}c/d"
+            order_array << "#{num}d"
+        end 
+        order_array
+    end 
+
     def self.list_locations
         all.each.with_index(1) do |item, index| 
             puts "#{index}. #{item.place}"

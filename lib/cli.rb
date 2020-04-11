@@ -60,7 +60,8 @@ class Cli
         when "1"
             @@active_location.get_and_add_routes
         when "2"
-            puts "We need to filter"
+            #puts "We need to filter"
+            @@active_location.choose_filter
         when "3"
             @@active_location.choose_sort
         when "4"

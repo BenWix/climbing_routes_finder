@@ -33,16 +33,10 @@ class Location
     end 
 
     def list_routes
-        case @sort
-        when "name"
-            @routes.sort_by!{|o| o.name}
-        when "grade"
-            @routes.sort_by!{|o| [o.grade[/[0-9]+/].to_i, o.grade[/[a-z]/]]}
-        when "stars"
-            @routes.sort_by!{|o| o.stars}.reverse!
-        end 
+        filter_routes
+        sort_routes
         puts "\nHere are some routes in #{self.place}!\n"
-        @routes.each.with_index(1) do |route, index|
+        @filtered_routes.each.with_index(1) do |route, index|
             puts "#{index}. #{route.name}: grade 5.#{route.grade}, type #{route.type}. stars #{route.stars}"
         end 
         puts " "
@@ -58,6 +52,35 @@ class Location
             puts "\nSorry, that is not a valid option. Please Try again.\n"
             choose_sort
         end 
+    end 
+
+    def choose_filter 
+        puts "Would you like to filter by grade, or type"
+        answer = gets.strip
+        case answer
+        when "grade"
+            grade_filter
+        when "type"
+            type filter
+        else 
+            puts "Sorry, I didn't understand that. Please try again."
+            choose_filter
+        end 
+    end 
+
+    def filter_routes
+        @filtered_routes = @routes
+    end 
+
+    def sort_routes 
+        case @sort
+        when "name"
+            @filtered_routes.sort_by!{|o| o.name}
+        when "grade"
+            @filtered_routes.sort_by!{|o| [o.grade[/[0-9]+/].to_i, o.grade[/[a-z]/]]}
+        when "stars"
+            @filtered_routes.sort_by!{|o| o.stars}.reverse!
+        end
     end 
 
     def save

@@ -81,37 +81,49 @@ class Location
     end 
 
     def grade_filter
+        set_lower_grade
+        set_upper_grade
+        
+        
+        ####Need to check that lower grade is less than upper grade
+    
+    
+    end 
+
+    def set_lower_grade
         puts "What would you like the lower grade threshhold to be? \nEnter 'help' to learn about climbing grades."
         lower_grade = gets.chomp
         if lower_grade == "help"
             help_list
-            grade_filter
-            return
+            set_lower_grade
+        else 
+            checked_lower_grade = grade_converter(lower_grade)
+            if checked_lower_grade 
+                @min_grade = checked_lower_grade 
+            else
+                puts "That is not a valid grade. Lets try again."
+                set_lower_grade
+            end
         end 
-        
-        checked_lower_grade = grade_converter(lower_grade)
-        if checked_lower_grade 
-            @min_grade = checked_lower_grade 
-        else
-            puts "That is not a valid grade. Lets try again."
-            grade_filter
-        end
-        
+    end 
+
+    def set_upper_grade
         puts "What would you like the upper grade threshhold to be? \nEnter 'help' to learn about climbing grades."
         upper_grade = gets.chomp
         if upper_grade.downcase == "help"
             help_list
-            grade_filter
-            return
-        end
-        checked_upper_grade = grade_converter(upper_grade)
-        if checked_upper_grade 
-            @max_grade = checked_upper_grade 
-        else 
-            puts "That is not a valid grade. Lets try again."
-            grade_filter
-        end
+            set_upper_grade
+        else
+            checked_upper_grade = grade_converter(upper_grade)
+            if checked_upper_grade 
+                @max_grade = checked_upper_grade 
+            else 
+                puts "That is not a valid grade. Lets try again."
+                set_upper_grade
+            end
+        end 
     end 
+
 
     def type_filter
         puts "\nWould you like to look at 'sport' or 'trad' climbs?"

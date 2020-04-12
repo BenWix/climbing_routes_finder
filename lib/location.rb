@@ -9,17 +9,26 @@ class Location
     require 'geocoder'
 
     def initialize(lat, lon, place)
-        @lat = lat
-        @lon =lon 
-        @place = place
-        @route_count = 0 
-        @range = 20
-        @min_grade = "5.1"
-        @max_grade = "5.15d"
+        @lat = lat             #longitude determined by geocode
+        @lon =lon              #longitude determined by geocode
+        @place = place         #Name of location entered by user
+        
+        #Has Many array
         @routes = []
-        @sort = "name"
-        get_and_add_routes
-        save
+        
+        #variable to control API
+        @range = 20            #The range (in miles) that the api will search from the chosen location
+        @route_count = 0       #How many routes the api class will pull from the api
+        
+        #Default values for sort order and filtering
+        @min_grade = "1"                       #Default minimum route grade
+        @max_grade = "15d"                     #Default maximum route grade
+        @sort = "name"                         #Default to sorting by name
+        @grade_order = Location.make_order     #Creates array to determine order of climbing grades
+        @available_types = ["sport", "trad"]   #Variable used to filter between sport and trad climbs
+        
+        get_and_add_routes                     #Gets 25 routes from api and creates route objects, adds to @routes
+        save                                   #save this location
     end
 
     def get_and_add_routes
@@ -56,34 +65,88 @@ class Location
     end 
 
     def choose_filter 
-        puts "Would you like to filter by grade, or type"
+        puts "Would you like to filter by grade, or type. Or enter 'clear' to clear all filters."
         answer = gets.strip
         case answer
         when "grade"
             grade_filter
         when "type"
-            type filter
+            type_filter
+        when "clear"
+            clear_filter
         else 
             puts "Sorry, I didn't understand that. Please try again."
             choose_filter
         end 
     end 
 
+    def grade_filter
+        puts "What would you like the lower grade threshhold to be? \nEnter 'help' to learn about climbing grades."
+        lower_grade = gets.chomp
+        if lower_grade == "help"
+            help_list
+            grade_filter
+            return
+        end 
+        
+        checked_lower_grade = grade_converter(lower_grade)
+        if checked_lower_grade 
+            @min_grade = checked_lower_grade 
+        else
+            puts "That is not a valid grade. Lets try again."
+            grade_filter
+        end
+        
+        puts "What would you like the upper grade threshhold to be? \nEnter 'help' to learn about climbing grades."
+        upper_grade = gets.chomp
+        if upper_grade.downcase == "help"
+            help_list
+            grade_filter
+            return
+        end
+        checked_upper_grade = grade_converter(upper_grade)
+        if checked_upper_grade 
+            @max_grade = checked_upper_grade 
+        else 
+            puts "That is not a valid grade. Lets try again."
+            grade_filter
+        end
+    end 
+
+    def grade_converter(grade)
+        test1 = @grade_order.include?(grade.split(".")[1])
+        test2 = grade[0] == "5"
+        if test1 && test2 
+            modified_grade = grade.split(".")[1][0..2]
+            modified_grade["+"] = "d" if modified_grade.include?("+")
+            modified_grade["-"] = "a" if modified_grade.include?("-")
+            modified_grade
+        else 
+            false
+        end 
+    end 
+
+    def help_list 
+        puts "Climbing grades are confusing"
+    end 
+    
     def filter_routes
-        @filtered_routes = @routes
+        #binding.pry 
+        @filtered_routes = @routes.select{|r| 
+            @grade_order.index(r.grade.split.first) >= @grade_order.index(@min_grade) &&
+            @grade_order.index(r.grade.split.first) <= @grade_order.index(@max_grade)}
+        @filtered_routes.select{|r| @available_types.include?(r.type)}
     end 
 
     def sort_routes 
-        grade_order = self.class.make_order
         case @sort
         when "name"
             @filtered_routes.sort_by!{|o| o.name}
         when "grade"
-            @filtered_routes.sort_by!{|o| grade_order.index(o.grade.split.first)}
+            @filtered_routes.sort_by!{|o| @grade_order.index(o.grade.split.first)}
         when "stars"
             @filtered_routes.sort_by!{|o| o.stars}.reverse!
         end
-        #binding.pry
     end 
 
     def save
@@ -107,6 +170,7 @@ class Location
             order_array << "#{num}a/b"
             order_array << "#{num}-"
             order_array << "#{num}b"
+            order_array << "#{num}"
             order_array << "#{num}b/c"
             order_array << "#{num}c"
             order_array << "#{num}+"

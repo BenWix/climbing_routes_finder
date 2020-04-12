@@ -1,5 +1,4 @@
 class Cli
-    #CHOICES = %w[1 2 exit]
     
     def self.run
         puts "\n\nWelcome to the Climbing Route Finder.\nGive us a location, and we can find a route to fit your needs!!\n"

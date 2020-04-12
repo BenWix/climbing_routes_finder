@@ -23,9 +23,9 @@ class Location
         #Default values for sort order and filtering
         @min_grade = "1"                       #Default minimum route grade
         @max_grade = "15d"                     #Default maximum route grade
+        @available_types = ["sport", "trad"]   #Variable used to filter between sport and trad climbs
         @sort = "name"                         #Default to sorting by name
         @grade_order = Location.make_order     #Creates array to determine order of climbing grades
-        @available_types = ["sport", "trad"]   #Variable used to filter between sport and trad climbs
         
         get_and_add_routes                     #Gets 25 routes from api and creates route objects, adds to @routes
         save                                   #save this location
@@ -113,6 +113,27 @@ class Location
         end
     end 
 
+    def type_filter
+        puts "\nWould you like to look at 'sport' or 'trad' climbs?"
+        answer = gets.chomp.downcase
+        case answer
+        when "sport"
+            @available_types = ["sport"]
+        when "trad"
+            @available_types = ["trad"]
+        else 
+            puts "\nWhoops, I didn't understand that. Let's try again"
+            type_filter
+        end 
+    end 
+
+    def clear_filter
+        @min_grade = "1"
+        @max_grade = "15d"
+        @available_types = ["sport", "trad"]
+    end 
+
+
     def grade_converter(grade)
         test1 = @grade_order.include?(grade.split(".")[1])
         test2 = grade[0] == "5"
@@ -135,7 +156,7 @@ class Location
         @filtered_routes = @routes.select{|r| 
             @grade_order.index(r.grade.split.first) >= @grade_order.index(@min_grade) &&
             @grade_order.index(r.grade.split.first) <= @grade_order.index(@max_grade)}
-        @filtered_routes.select{|r| @available_types.include?(r.type)}
+        @filtered_routes.select!{|r| @available_types.include?(r.type.downcase)}
     end 
 
     def sort_routes 

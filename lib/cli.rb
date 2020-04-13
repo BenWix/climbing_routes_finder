@@ -64,6 +64,8 @@ class Cli
         when "3"
             @@active_location.choose_sort
         when "4"
+            @@active_location.route_info
+        when "5"
             get_new_area
         when "list"
             list_location_options
@@ -78,7 +80,8 @@ class Cli
         puts "1. Get more routes"
         puts "2. Filter Routes"
         puts "3. Sort Routes"
-        puts "4. Find a new area"
+        puts "4. Get more info on a route"
+        puts "5. Discover a new area"
         puts "enter 'exit' to return to main menu.\n" 
     end
 

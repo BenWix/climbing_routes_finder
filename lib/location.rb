@@ -32,9 +32,9 @@ class Location
     end
 
     def get_and_add_routes
-        @route_count += 25
+        @route_count += 25         #each time this is run, the program will expand the route count pulled from the API by 25 routes
         data = Api.get_routes(self)
-        data.each do |route|
+        data.each do |route|       #Instanciates a new route object unless it already exitst and adds it to the @route array
             unless Route.all_ids.include?(route["id"]) 
                 new_route = Route.new_from_hash(route, self)
                 @routes << new_route
@@ -43,7 +43,7 @@ class Location
     end 
 
     def list_routes
-        filter_routes
+        filter_routes    #Before the routes for each location are listed, the program will filter and sort @routes and puts it into @filtered_routes
         sort_routes
         puts "\nHere are some routes in #{self.place}!\n"
         @filtered_routes.each.with_index(1) do |route, index|
@@ -196,6 +196,18 @@ class Location
         when "stars"
             @filtered_routes.sort_by!{|o| o.stars}.reverse!
         end
+    end 
+
+    def route_info
+        puts "\nPlease enter the name of one of the above routes.\n"
+        selected_route = gets.strip.downcase
+        if @filtered_routes.any?{|r| r.name.downcase == selected_route}
+            more_info_route = @filtered_routes.find{|r| r.name.downcase == selected_route}
+            more_info_route.display_info
+        else
+            puts "\nI don't reckognize that route. Let's try again.\n"
+            route_info
+        end 
     end 
 
     def save

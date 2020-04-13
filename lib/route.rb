@@ -12,9 +12,15 @@ class Route
         save 
     end 
 
+    def display_info
+
+    end 
+    
     def save
         @@all << self 
     end
+
+
 
     ###Class Methods###
     def self.all 
@@ -34,6 +40,7 @@ class Route
         Route.new(name, grade, type, stars, id, location)
     end 
         
+
     # def self.get_routes_by_location(location)
     #     selected_routes = Route.all.select{|route| route.location == location}
     # end

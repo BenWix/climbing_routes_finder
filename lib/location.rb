@@ -83,11 +83,11 @@ class Location
     def grade_filter
         set_lower_grade
         set_upper_grade
-        
-        
-        ####Need to check that lower grade is less than upper grade
-    
-    
+        if @grade_order.index(@max_grade) < @grade_order.index(@min_grade)
+            puts "\nLooks like your lower grade is higher than your upper grade."
+            puts "\nLet's try again.\n"
+            grade_filter
+        end
     end 
 
     def set_lower_grade

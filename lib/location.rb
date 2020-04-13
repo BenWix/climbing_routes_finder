@@ -91,7 +91,7 @@ class Location
     end 
 
     def set_lower_grade
-        puts "What would you like the lower grade threshhold to be? \nEnter 'help' to learn about climbing grades."
+        puts "\nWhat would you like the lower grade threshhold to be? \nEnter 'help' to learn about climbing grades.\n"
         lower_grade = gets.chomp
         if lower_grade == "help"
             help_list
@@ -108,7 +108,7 @@ class Location
     end 
 
     def set_upper_grade
-        puts "What would you like the upper grade threshhold to be? \nEnter 'help' to learn about climbing grades."
+        puts "\nWhat would you like the upper grade threshhold to be? \nEnter 'help' to learn about climbing grades.\n"
         upper_grade = gets.chomp
         if upper_grade.downcase == "help"
             help_list
@@ -160,7 +160,23 @@ class Location
     end 
 
     def help_list 
-        puts "Climbing grades are confusing"
+        puts "\n\nClimbing grades can be confusing. In North America we use"
+        puts "the Yosemite Decimal System (YDS) for climbing routes."
+        puts 'YDS looks something like this  "5.10c". The first number'
+        puts 'will be the class of the climb. Climb classes start at 1,'
+        puts "but all of the climbs used in this project are class 5 climbs"
+        puts "That means they are technical rock climbs, vertical in nature,"
+        puts "and require the use of a rope for safety.  Everything afte the '.'"
+        puts "Will tell the difficulty of the route. The lower the number, the"
+        puts "easier the route. Once you reach 5.10, the routes are further "
+        puts "divided by a letter after the number. The available letters are"
+        puts "a, b, c, and d going from easiest to most difficult respectively."
+        puts "So a 5.10a is easier than a 5.10c."
+
+        puts "\nThe grades in this project starts at 5.1 and they have no upper"
+        puts "limit!! However, the hardest climb in the world is a 5.15d, but "
+        puts "climbers are an optimistic bunch and they want to be ready for"
+        puts "even bigger and harder projects in the future.\n\n"
     end 
     
     def filter_routes

@@ -86,23 +86,28 @@ class Cli
     end
 
     def self.get_old_area
-        Location.list_locations
-        options = ['list', 'exit'] + Array(1..Location.all.length).map{|o| o.to_s}
-        puts "\nPlease pick one of the locations from the above list"
-        choice = get_choice(options)
-        case choice 
-        when 'list' 
-            get_old_area
-        when 'exit'
-
-        else 
-            if options.include?(choice)
-                @@active_location = Location.all[choice.to_i - 1]
-            else 
-                puts "Sorry, I didn't understand that. Please try again"
+        unless Location.all.length == 0
+            Location.list_locations
+            options = ['list', 'exit'] + Array(1..Location.all.length).map{|o| o.to_s}
+            puts "\nPlease pick one of the locations from the above list"
+            choice = get_choice(options)
+            case choice 
+            when 'list' 
                 get_old_area
+            when 'exit'
+                run_loop
+            else 
+                if options.include?(choice)
+                    @@active_location = Location.all[choice.to_i - 1]
+                else 
+                    puts "Sorry, I didn't understand that. Please try again"
+                    get_old_area
+                end 
             end 
-        end 
-        current_area_options
+            current_area_options
+        else 
+            puts "Looks like you haven't discovered any areas yet. Lets find some."
+            get_new_area
+        end
     end 
 end 

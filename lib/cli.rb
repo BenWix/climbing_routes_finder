@@ -69,7 +69,11 @@ class Cli
         when "5"
             get_new_area
         end 
-        choice == "exit" ? run_loop : current_area_options
+        if choice == "exit" || @@active_location.routes.length == 0  
+            run_loop  
+        else
+            current_area_options
+        end 
     end 
 
     def self.list_location_options

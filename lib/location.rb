@@ -57,7 +57,7 @@ class Location
     end 
 
     def choose_sort 
-        puts "Would you like to sort the routes by name, grade, or stars?"
+        puts "Would you like to sort the routes by 'name', 'grade', or 'stars'?"
         answer = gets.strip.downcase
         choices = %w[name grade stars]
         if choices.include?(answer)
@@ -70,7 +70,7 @@ class Location
 
     def choose_filter 
         puts "Would you like to filter by 'grade' or 'type'. Or enter 'clear' to clear all filters."
-        answer = gets.strip
+        answer = gets.strip.downcase
         case answer
         when "grade"
             grade_filter
@@ -78,6 +78,8 @@ class Location
             type_filter
         when "clear"
             clear_filter
+        when "exit"
+            #exit
         else 
             puts "Sorry, I didn't understand that. Please try again."
             choose_filter
@@ -137,6 +139,8 @@ class Location
             @available_types = ["sport"]
         when "trad"
             @available_types = ["trad"]
+        when "exit"
+            
         else 
             puts "\nWhoops, I didn't understand that. Let's try again"
             type_filter

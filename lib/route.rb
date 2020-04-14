@@ -15,7 +15,7 @@ class Route
     end 
 
     def display_info
-        puts "Name: #{@name}"
+        puts "\nName: #{@name}"
         puts "Grade: #{@grade}"
         puts "Stars: #{@stars}"
         puts "Type: #{@type}"
@@ -26,8 +26,6 @@ class Route
     def save
         @@all << self 
     end
-
-
 
     ###Class Methods###
     def self.all 
@@ -48,9 +46,5 @@ class Route
         specific_location = route_hash["location"].join(" >> ")
         Route.new(name, grade, type, stars, id, specific_location, pitches, location)
     end 
-        
 
-    # def self.get_routes_by_location(location)
-    #     selected_routes = Route.all.select{|route| route.location == location}
-    # end
 end 

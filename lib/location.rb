@@ -23,15 +23,16 @@ class Location
         #Default values for sort order and filtering
         @min_grade = "1"                       #Default minimum route grade
         @max_grade = "15d"                     #Default maximum route grade
-        @available_types = ["sport", "trad"]   #Variable used to filter between sport and trad climbs
+        @available_types = ["sport", "trad", "tr"]   #Variable used to filter between sport and trad climbs
         @sort = "name"                         #Default to sorting by name
         @grade_order = Location.make_order     #Creates array to determine order of climbing grades
         
         get_and_add_routes                     #Gets 25 routes from api and creates route objects, adds to @routes
-        unless @routes.length == "0"
-            save                                   #save this location
-        else 
+        #binding.pry
+        if @routes.length == 0
             puts "Looks like there are no routes in this area. Sorry."
+        else 
+            save                                   #save this location
         end
     end 
 
@@ -146,7 +147,7 @@ class Location
     def clear_filter
         @min_grade = "1"
         @max_grade = "15d"
-        @available_types = ["sport", "trad"]
+        @available_types = ["sport", "trad", "tr"]
     end 
 
 
@@ -188,7 +189,7 @@ class Location
         @filtered_routes = @routes.select{|r| 
             @grade_order.index(r.grade.split.first) >= @grade_order.index(@min_grade) &&
             @grade_order.index(r.grade.split.first) <= @grade_order.index(@max_grade)}
-        @filtered_routes.select!{|r| @available_types.include?(r.type.downcase)}
+        @filtered_routes.select!{|r| @available_types.any?{|type| r.type.downcase.include?(type)}}
     end 
 
     def sort_routes 

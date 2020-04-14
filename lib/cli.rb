@@ -15,14 +15,13 @@ class Cli
         case choice 
         when "1" 
             get_new_area
-            current_area_options unless @@active_location.routes.length == 0
         when "2"
             get_old_area
         when "list"
             main_list_options
             choice = get_choice(options)
         end 
-        run_loop unless choice == "exit"
+        choice == "exit" ? exit! : run_loop
     end 
 
     def self.get_choice(choices)
@@ -45,15 +44,17 @@ class Cli
 
     def self.get_new_area
         puts "\nLet's find somewhere new to climb! Please enter a location to find routes nearby"
+        puts "Feel free to enter a city, address, zip code, etc."
         location = gets.strip
         puts " "
         @@active_location = Location.create_from_place(location)
+        current_area_options unless @@active_location.routes.length == 0
     end
 
     def self.current_area_options
         @@active_location.list_routes
         list_location_options
-        options = %w[1 2 3 4 5 exit list]
+        options = %w[1 2 3 4 5 exit]
         choice = get_choice(options)
         case choice 
         when "1"
@@ -67,11 +68,8 @@ class Cli
             @@active_location.route_info
         when "5"
             get_new_area
-        when "list"
-            list_location_options
-            choice = get_choice(options)
         end 
-        current_area_options unless choice == "exit"
+        choice == "exit" ? run_loop : current_area_options
     end 
 
     def self.list_location_options

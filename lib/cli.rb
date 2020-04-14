@@ -15,7 +15,9 @@ class Cli
         case choice 
         when "1" 
             get_new_area
-            current_area_options
+            unless @@active_location.routes.length == 0
+                current_area_options
+            end 
         when "2"
             get_old_area
         when "list"

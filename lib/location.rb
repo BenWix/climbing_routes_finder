@@ -28,8 +28,12 @@ class Location
         @grade_order = Location.make_order     #Creates array to determine order of climbing grades
         
         get_and_add_routes                     #Gets 25 routes from api and creates route objects, adds to @routes
-        save                                   #save this location
-    end
+        unless @routes.length == "0"
+            save                                   #save this location
+        else 
+            puts "Looks like there are no routes in this area. Sorry."
+        end
+    end 
 
     def get_and_add_routes
         @route_count += 25         #each time this is run, the program will expand the route count pulled from the API by 25 routes
@@ -201,11 +205,13 @@ class Location
     def route_info
         puts "\nPlease enter the name of one of the above routes.\n"
         selected_route = gets.strip.downcase
-        if @filtered_routes.any?{|r| r.name.downcase == selected_route}
-            more_info_route = @filtered_routes.find{|r| r.name.downcase == selected_route}
+        if @filtered_routes.any?{|r| r.name.downcase.start_with?(selected_route)}
+            more_info_route = @filtered_routes.find{|r| r.name.downcase.start_with?(selected_route)}
             more_info_route.display_info
+        elsif selected_route == 'exit'
+            Cli.run.loop
         else
-            puts "\nI don't reckognize that route. Let's try again.\n"
+            puts "\nI don't reckognize that route. Let's try again. Or type 'exit'.\n"
             route_info
         end 
     end 

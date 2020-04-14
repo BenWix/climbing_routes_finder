@@ -1,19 +1,26 @@
 class Route
-    attr_accessor :name, :grade, :type, :stars, :id, :location
+    attr_reader :name, :grade, :type, :stars, :id, :location, :specific_location, :pitches
     @@all = []
 
-    def initialize(name, grade, type, stars, id, location)
+    def initialize(name, grade, type, stars, id, specific_location, pitches, location)
         @name = name
         @grade = grade.split(".")[1] 
         @type = type 
         @stars = stars
         @id = id
+        @pitches = pitches  
         @location = location
+        @specific_location = specific_location
         save 
     end 
 
     def display_info
-
+        puts "Name: #{@name}"
+        puts "Grade: #{@grade}"
+        puts "Stars: #{@stars}"
+        puts "Type: #{@type}"
+        puts "Number of Pitches: #{@pitches}"
+        puts "Directions: #{@specific_location}"
     end 
     
     def save
@@ -37,7 +44,9 @@ class Route
         type = route_hash["type"] 
         stars = route_hash["stars"]
         id = route_hash["id"]
-        Route.new(name, grade, type, stars, id, location)
+        pitches = route_hash["pitches"]
+        specific_location = route_hash["location"].join(" >> ")
+        Route.new(name, grade, type, stars, id, specific_location, pitches, location)
     end 
         
 

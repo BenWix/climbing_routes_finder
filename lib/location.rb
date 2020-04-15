@@ -79,7 +79,7 @@ class Location
         when "clear"
             clear_filter
         when "exit"
-            #exit
+            exit!
         else 
             puts "Sorry, I didn't understand that. Please try again."
             choose_filter
@@ -140,7 +140,7 @@ class Location
         when "trad"
             @available_types = ["trad"]
         when "exit"
-            
+            exit!
         else 
             puts "\nWhoops, I didn't understand that. Let's try again"
             type_filter

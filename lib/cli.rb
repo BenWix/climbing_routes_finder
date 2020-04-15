@@ -6,8 +6,6 @@ class Cli
         run_loop
     end 
     
-    private 
-    
     def self.run_loop     
         main_list_options
         options = %w[1 2 list exit]
@@ -60,7 +58,6 @@ class Cli
         when "1"
             @@active_location.get_and_add_routes
         when "2"
-            #puts "We need to filter"
             @@active_location.choose_filter
         when "3"
             @@active_location.choose_sort

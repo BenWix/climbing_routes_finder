@@ -16,8 +16,7 @@ class Cli
         when "2"
             get_old_area
         when "list"
-            main_list_options
-            choice = get_choice(options)
+            
         end 
         choice == "exit" ? exit! : run_loop
     end 

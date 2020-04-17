@@ -1,5 +1,5 @@
 class Location 
-    attr_accessor :route_count, :min_grade, :max_grade, :routes, :range
+    attr_accessor :route_count, :min_grade, :max_grade, :routes, :range, :sort, :available_types, :filtered_routes
     attr_reader :lat, :lon, :place
     
     @@all = []
@@ -26,11 +26,7 @@ class Location
         @sort = "name"                         #Default to sorting by name
         
         get_and_add_routes                     #Gets 25 routes from api and creates route objects, adds to @routes
-        if @routes.length == 0
-            puts "Looks like there are no routes in this area. Sorry."
-        else 
-            save                                   #save this location
-        end
+        save unless @routes.length == 0
     end 
 
     def get_and_add_routes
@@ -44,52 +40,17 @@ class Location
         end
     end 
 
-    def list_routes
-        filter_routes    #Before the routes for each location are listed, the program will filter and sort @routes and puts it into @filtered_routes
-        sort_routes
-        puts "\nHere are some routes in #{self.place}!\n"
-        @filtered_routes.each.with_index(1) do |route, index|
-            puts "#{index}. #{route.name}: grade 5.#{route.grade}, type #{route.type}. stars #{route.stars}"
-        end 
-        puts " "
-    end 
-
-    def type_filter
-        puts "\nWould you like to look at 'sport' or 'trad' climbs?"
-        answer = gets.chomp.downcase
-        case answer
-        when "sport"
-            @available_types = ["sport"]
-        when "trad"
-            @available_types = ["trad"]
-        when "exit"
-            exit!
-        else 
-            puts "\nWhoops, I didn't understand that. Let's try again"
-            type_filter
-        end 
-    end 
-
     def clear_filter
         @min_grade = "1"
         @max_grade = "15d"
         @available_types = ["sport", "trad", "tr"]
     end 
-
-
-
-
  
-    
-    def filter_routes
-        #binding.pry 
+    def filter_and_sort_routes
         @filtered_routes = @routes.select{|r| 
             GRADE_ORDER.index(r.grade.split.first) >= GRADE_ORDER.index(@min_grade) &&
             GRADE_ORDER.index(r.grade.split.first) <= GRADE_ORDER.index(@max_grade)}
         @filtered_routes.select!{|r| @available_types.any?{|type| r.type.downcase.include?(type)}}
-    end 
-
-    def sort_routes 
         case @sort
         when "name"
             @filtered_routes.sort_by!{|o| o.name}
@@ -100,42 +61,19 @@ class Location
         end
     end 
 
-    def route_info
-        puts "\nPlease enter the name of one of the above routes.\n"
-        selected_route = gets.strip.downcase
-        if @filtered_routes.any?{|r| r.name.downcase.start_with?(selected_route)}
-            more_info_route = @filtered_routes.find{|r| r.name.downcase.start_with?(selected_route)}
-            more_info_route.display_info
-        elsif selected_route == 'exit'
-            Cli.run.loop
-        else
-            puts "\nI don't reckognize that route. Let's try again. Or type 'exit'.\n"
-            route_info
-        end 
-    end 
-
     def save
         @@all << self
     end 
 
     ###Class Methods###
-
-    def self.list_locations
-        all.each.with_index(1) do |item, index| 
-            puts "#{index}. #{item.place}"
-        end     
-    end 
-    
+ 
     def self.create_from_place(place) 
         geocode_obj = Geocoder.search(place).first 
         unless geocode_obj == nil
             lat,lon = geocode_obj.coordinates
             Location.new(lat, lon, place)
-
         else 
-            puts "\nLooks like we couldn't find that place. Try again."
-            place = gets.strip
-            create_from_place(place)
+            nil
         end 
     end 
 

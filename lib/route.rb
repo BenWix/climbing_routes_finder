@@ -13,15 +13,6 @@ class Route
         @specific_location = specific_location
         save 
     end 
-
-    def display_info
-        puts "\nName: #{@name}"
-        puts "Grade: #{@grade}"
-        puts "Stars: #{@stars}"
-        puts "Type: #{@type}"
-        puts "Number of Pitches: #{@pitches}"
-        puts "Directions: #{@specific_location}"
-    end 
     
     def save
         @@all << self 

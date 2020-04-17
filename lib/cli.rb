@@ -44,7 +44,6 @@ class Cli
         end 
     end 
 
-    
     def main_list_options
         puts "\nPlease pick one of the following options to get started"
         puts "_______________________________________________________"
@@ -59,12 +58,22 @@ class Cli
         location = gets.strip
         puts " "
         @active_location = Location.create_from_place(location)
-        current_area_options unless @active_location.routes.length == 0
+        if @active_location == nil
+            puts "\nLooks like we couldn't find that place. Try again."
+            get_new_area
+        elsif   @active_location.routes.length == 0
+            puts "\nLooks like there aren't any routes in this area. Try again."
+            get_new_area
+        else
+            current_area_options 
+        end 
     end
 
     def get_old_area
         unless Location.all.length == 0
-            Location.list_locations
+            Location.all.each.with_index(1) do |item, index| 
+                puts "#{index}. #{item.place}"
+            end  
             options = ['list', 'exit'] + Array(1..Location.all.length).map{|o| o.to_s}
             puts "\nPlease pick one of the locations from the above list"
             choice = get_choice(options)
@@ -89,7 +98,7 @@ class Cli
     end 
 
     def current_area_options
-        @active_location.list_routes
+        list_routes
         list_location_options
         options = %w[1 2 3 4 5 exit list]
         choice = get_choice(options)
@@ -101,7 +110,7 @@ class Cli
         when "3"
             choose_sort
         when "4"
-            @active_location.route_info
+            route_info
         when "5"
             get_new_area
         end 
@@ -111,25 +120,7 @@ class Cli
             current_area_options
         end 
     end 
-        
-    def choose_filter 
-        puts "Would you like to filter by 'grade' or 'type'. Or enter 'clear' to clear all filters."
-        answer = gets.strip.downcase
-        case answer
-        when "grade"
-            grade_filter
-        when "type"
-            @active_location.type_filter
-        when "clear"
-            @active_location.clear_filter
-        when "exit"
-            exit!
-        else 
-            puts "Sorry, I didn't understand that. Please try again."
-            choose_filter
-        end 
-    end 
-
+    
     def list_location_options
         puts "\nPlease pick one of the following options to discover more."
         puts "_______________________________________________________"
@@ -140,6 +131,72 @@ class Cli
         puts "5. Discover a new area"
         puts "enter 'exit' to return to main menu.\n" 
     end
+
+    def list_routes
+        @active_location.filter_and_sort_routes
+        puts "\nHere are some routes in #{@active_location.place}!\n"
+        @active_location.filtered_routes.each.with_index(1) do |route, index|
+            puts "#{index}. #{route.name}: grade 5.#{route.grade}, type #{route.type}. stars #{route.stars}"
+        end 
+        puts " "
+    end 
+
+    def route_info
+        puts "\nPlease enter the name of one of the above routes.\n"
+        selected_route = gets.strip.downcase
+        if @active_location.filtered_routes.any?{|r| r.name.downcase.start_with?(selected_route)}
+            @more_info_route = @active_location.filtered_routes.find{|r| r.name.downcase.start_with?(selected_route)}
+            display_route_info
+        elsif selected_route == 'exit'
+            Cli.run.loop
+        else
+            puts "\nI don't reckognize that route. Let's try again. Or type 'exit'.\n"
+            route_info
+        end 
+    end 
+
+    def display_route_info
+        puts "\nName: #{@more_info_route.name}"
+        puts "Grade: #{@more_info_route.grade}"
+        puts "Stars: #{@more_info_route.stars}"
+        puts "Type: #{@more_info_route.type}"
+        puts "Number of Pitches: #{@more_info_route.pitches}"
+        puts "Directions: #{@more_info_route.specific_location}"
+    end 
+        
+    def choose_filter 
+        puts "Would you like to filter by 'grade' or 'type'. Or enter 'clear' to clear all filters."
+        answer = gets.strip.downcase
+        case answer
+        when "grade"
+            grade_filter
+        when "type"
+            type_filter
+        when "clear"
+            @active_location.clear_filter
+        when "exit"
+            exit!
+        else 
+            puts "Sorry, I didn't understand that. Please try again."
+            choose_filter
+        end 
+    end 
+        
+    def type_filter
+        puts "\nWould you like to look at 'sport' or 'trad' climbs?"
+        answer = gets.chomp.downcase
+        case answer
+        when "sport"
+            @active_location.available_types = ["sport"]
+        when "trad"
+            @active_location.available_types = ["trad"]
+        when "exit"
+            exit!
+        else 
+            puts "\nWhoops, I didn't understand that. Let's try again"
+            type_filter
+        end 
+    end 
 
     def grade_filter
         set_lower_grade

@@ -3,4 +3,4 @@
 
 require_relative '../config/environment'
 
-Cli.run
+Cli.new.run

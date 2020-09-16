@@ -7,7 +7,7 @@ require 'net/http'
 require 'open-uri'
 require 'json'
 
-Dotenv.load
+Dotenv.load('../.env')
 
 
 

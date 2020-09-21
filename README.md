@@ -1,8 +1,8 @@
-#Climbing Routes Finder CLI Project 
+# Climbing Routes Finder CLI Project 
 
 This CLI project will utilize the API provided by mountain project.
 
-###Getting Started
+### Getting Started
 
 In order to access the Mountain Project api using this program. You must get a key provided by mountain project and place it in a .env file.  The .env file will be in the main project directory with the following format
 
@@ -18,7 +18,7 @@ To learn more about Mountain Project and the API used follow this link
 
 https://www.mountainproject.com/data
 
-###About
+### About
 
 The program will let the user discover new routes in any area and will let the user filter and sort the found routes. The location if found using the geocode gem and will take a name, address, city, postal code, and many other data types to find a location. The API will find routes that are within 20 miles of the location found by geocoder. 
 
